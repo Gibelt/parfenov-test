@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <title>index</title>
+</head>
+
+<body>
+    <div class="container">
+        <header class="head">
+            <h1>Приложения</h1>
+        </header>
+        <button class="btn btn-create">
+            <i class="bi bi-plus-lg" style="font-size: 3rem; cursor: pointer;"></i>
+        </button>
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createModalLabel">Новое приложение</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3 row">
+                                <label for="app-name-create" class="col-sm-2 col-form-label">Имя приложения</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="app-name-create">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="app-id-create" class="col-sm-2 col-form-label">Идентификатор</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="app-id-create">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="app-policy-create" class="col-sm-2 col-form-label">Политика</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="app-policy-create">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="alert-message-create">
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <div>
+                                    An example danger alert with an icon
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn-create-send btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel">Изменить приложение</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3 row">
+                                <label for="app-name-update" class="col-sm-2 col-form-label">Имя приложения</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="app-name-update">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="app-id-update" class="col-sm-2 col-form-label">Идентификатор</label>
+                                <div class="col-sm-5">
+                                    <input type="text" readonly class="form-control" id="app-id-update">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="app-policy-update" class="col-sm-2 col-form-label">Политика</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control" id="app-policy-update">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="alert-message-update">
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <div>
+                                    An example danger alert with an icon
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn-update-send btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table id="table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Имя приложения</th>
+                    <th scope="col">Идентификатор</th>
+                    <th scope="col">Политика</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <canvas id="request-canvas" width="400" height="100"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let appId
+            const alertUpdate = document.querySelector(".alert-message-update");
+            const alertCreate = document.querySelector(".alert-message-create");
+
+            async function loadDataIntoTable(url, table) {
+
+                const tableBody = table.querySelector("tbody")
+
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json; charset=utf-8");
+                myHeaders.append("Content-Length", "2");
+
+                const requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: "''",
+                };
+
+                const data = await fetch("http://checkstatus.website:8099/Face/App_List", requestOptions);
+                const response = await data.json();
+                console.log(response);
+                tableBody.innerHTML = ''
+                for (let i = 0; i < response["app_table_ids"].length; i++) {
+                    const rowElement = document.createElement("tr");
+
+                    const cellId = document.createElement("td");
+                    cellId.setAttribute("name", "id");
+                    cellId.textContent = response["app_table_ids"][i];
+                    const cellName = document.createElement("td");
+                    cellName.setAttribute("name", "name");
+                    cellName.textContent = response.names[i];
+                    const cellAlias = document.createElement("td");
+                    cellAlias.setAttribute("name", "alias");
+                    cellAlias.textContent = response.ids[i];
+                    const cellPolicy = document.createElement("td");
+                    cellPolicy.setAttribute("name", "pilicy");
+                    cellPolicy.textContent = response["policy_ids"][i]
+                    const cellChange = document.createElement("td");
+                    const editButton = document.createElement("button");
+                    const editIcon = document.createElement("i")
+                    editButton.classList.add("btn");
+                    editIcon.classList.add("bi");
+                    editIcon.classList.add("bi-pencil-square");
+                    editButton.appendChild(editIcon)
+                    cellChange.appendChild(editButton);
+
+                    editButton.addEventListener("click", e => {
+                        const text = e.target.closest("tr").children
+                        for (const child of text) {
+                            if (child.getAttribute('name') === "alias")
+                                appId = child.textContent;
+                        }
+                        const myModal = new bootstrap.Modal(document.getElementById('updateModal'));
+                        const appIdInput = document.getElementById('app-id-update');
+                        const appNameInput = document.getElementById('app-name-update');
+                        const appPolicyInput = document.getElementById('app-policy-update');
+                        appIdInput.value = appId;
+                        appNameInput.value = '';
+                        appPolicyInput.value = '';
+                        myModal.show()
+                        alertUpdate.style.display = "none";
+                    });
+
+                    rowElement.appendChild(cellId);
+                    rowElement.appendChild(cellName);
+                    rowElement.appendChild(cellAlias);
+                    rowElement.appendChild(cellPolicy);
+                    rowElement.appendChild(cellChange);
+
+                    tableBody.appendChild(rowElement);
+                }
+            }
+
+            loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+
+            async function sendChangeData(url, id, name, policy) {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json; charset=utf-8");
+                myHeaders.append("Content-Length", "124");
+
+                const requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: `'{\n\"app_id\": \"${id}\", \n\"app_name\": \"${name}\", \n\"policy_id\": \"${policy}\", \n\"agent_js_config\": \"123123\", \n\"correlations_config\": \"321321\"\n}'`,
+                };
+
+                const data = await fetch(url, requestOptions)
+                const response = await data.json()
+                console.log(response)
+            }
+
+            async function sendNewApp(url, id, name, policy) {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json; charset=utf-8");
+                myHeaders.append("Content-Length", "124");
+
+                const requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: `'{\n\"app_id\": \"${id}\", \n\"app_name\": \"${name}\", \n\"policy_id\": \"${policy}\", \n\"agent_js_config\": \"123123\", \n\"correlations_config\": \"321321\"\n}'`,
+                };
+
+                const data = await fetch(url, requestOptions)
+                const response = await data.json()
+                console.log(response)
+            }
+
+            const updateButtonSend = document.querySelector(".btn-update-send");
+            const createButton = document.querySelector(".btn-create");
+            const createButtonSend = document.querySelector(".btn-create-send")
+
+            updateButtonSend.addEventListener("click", () => {
+                const myModal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+                const name = document.getElementById("app-name-update").value;
+                const policy = document.getElementById("app-policy-update").value;
+
+                sendChangeData("http://checkstatus.website:8099/Face/Update_app", appId, name, policy).then(() => {
+                    myModal.hide()
+                    loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                }).catch(e => {
+                    alertUpdate.style.display = "block"
+                    alertUpdate.closest("div").firstElementChild.textContent = e.message
+                    console.error(e.message)
+                })
+            })
+
+            createButton.addEventListener("click", () => {
+                const myModal = new bootstrap.Modal(document.getElementById('createModal'));
+                const appIdInput = document.getElementById('app-id-create');
+                const appNameInput = document.getElementById('app-name-create');
+                const appPolicyInput = document.getElementById('app-policy-create');
+                appIdInput.value = '';
+                appNameInput.value = '';
+                appPolicyInput.value = '';
+                myModal.show()
+                alertCreate.style.display = "none";
+            })
+
+            createButtonSend.addEventListener("click", () => {
+                const myModal = bootstrap.Modal.getInstance(document.getElementById('createModal'));
+                const appId = document.getElementById("app-id-create").value;
+                const name = document.getElementById("app-name-create").value;
+                const policy = document.getElementById("app-policy-create").value;
+
+                sendChangeData("http://checkstatus.website:8099/Face/New_app", appId, name, policy).then(() => {
+                    myModal.hide()
+                    loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                }).catch(e => {
+                    alertUpdate.style.display = "block"
+                    alertUpdate.closest("div").firstElementChild.textContent = e.message
+                    console.error(e.message)
+                })
+            })
+
+            const data = [{ x: "2022-01-01 18:18:00", y: "0" }, { x: "2022-01-01 20:01:00", y: "180" }, { x: "2022-01-01 20:02:00", y: "179" }, { x: "2022-01-01 20:03:00", y: "210" }, { x: "2022-01-01 20:04:00", y: "211" }, { x: "2022-01-01 20:05:00", y: "213" }, { x: "2022-01-01 20:06:00", y: "220" }, { x: "2022-01-01 20:07:00", y: "221" }, { x: "2022-01-01 20:08:00", y: "219" }, { x: "2022-01-01 20:09:00", y: "217" }, { x: "2022-01-01 20:10:00", y: "216" }, { x: "2022-01-01 20:11:00", y: "230" }, { x: "2022-01-01 20:12:00", y: "219" }, { x: "2022-01-01 20:13:00", y: "216" }, { x: "2022-01-01 20:14:00", y: "214" }, { x: "2022-01-01 20:15:00", y: "217" }, { x: "2022-01-01 20:16:00", y: "217" }, { x: "2022-01-01 20:17:00", y: "215" }, { x: "2022-01-01 20:18:00", y: "213" }, { x: "2022-01-01 20:19:00", y: "50" }];
+
+            const data2 = [{ x: "2022-01-01 18:18:00", y: "0" }, { x: "2022-01-01 20:01:00", y: "180" }, { x: "2022-01-01 20:02:00", y: "179" }, { x: "2022-01-01 20:03:00", y: "210" }, { x: "2022-01-01 20:04:00", y: "211" }, { x: "2022-01-01 20:05:00", y: "213" }, { x: "2022-01-01 20:06:00", y: "220" }, { x: "2022-01-01 20:07:00", y: "221" }, { x: "2022-01-01 20:08:00", y: "219" }, { x: "2022-01-01 20:09:00", y: "217" }, { x: "2022-01-01 20:10:00", y: "216" }, { x: "2022-01-01 20:11:00", y: "230" }, { x: "2022-01-01 20:12:00", y: "219" }, { x: "2022-01-01 20:13:00", y: "216" }, { x: "2022-01-01 20:14:00", y: "214" }, { x: "2022-01-01 20:15:00", y: "217" }, { x: "2022-01-01 20:16:00", y: "217" }, { x: "2022-01-01 20:17:00", y: "215" }, { x: "2022-01-01 20:18:00", y: "213" }, { x: "2022-01-01 20:19:00", y: "60" }];
+
+            const data3 = [{ x: "2022-01-01 18:18:00", y: "0" }, { x: "2022-01-01 20:01:00", y: "400" }, { x: "2022-01-01 20:02:00", y: "390" }, { x: "2022-01-01 20:03:00", y: "500" }, { x: "2022-01-01 20:04:00", y: "520" }, { x: "2022-01-01 20:05:00", y: "510" }, { x: "2022-01-01 20:06:00", y: "520" }, { x: "2022-01-01 20:07:00", y: "530" }, { x: "2022-01-01 20:08:00", y: "535" }, { x: "2022-01-01 20:09:00", y: "520" }, { x: "2022-01-01 20:10:00", y: "514" }, { x: "2022-01-01 20:11:00", y: "450" }, { x: "2022-01-01 20:12:00", y: "480" }, { x: "2022-01-01 20:13:00", y: "500" }, { x: "2022-01-01 20:14:00", y: "530" }, { x: "2022-01-01 20:15:00", y: "527" }, { x: "2022-01-01 20:16:00", y: "500" }, { x: "2022-01-01 20:17:00", y: "510" }, { x: "2022-01-01 20:18:00", y: "490" }, { x: "2022-01-01 20:19:00", y: "90" }];
+
+            const requestCanvas = document.getElementById("request-canvas")
+
+            const barChart = new Chart(requestCanvas, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ["rgb(223, 55, 12)"],
+                    },
+                    {
+                        data: data2,
+                        backgroundColor: ["rgb(200, 122, 11)"],
+                    },
+                    {
+                        data: data3,
+                        backgroundColor: ["rgb(167, 24, 67)"],
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Перехваченные запросы',
+                        },
+                        legend: {
+                            display: false
+                        },
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                stepSize: 18,
+                            },
+                            type: "time",
+                            time: {
+                                unit: "minute",
+                                displayFormats: {
+                                    minute: 'HH:mm'
+                                },
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 1000
+                        }
+                    },
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>
