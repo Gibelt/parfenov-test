@@ -200,7 +200,7 @@
                     body: "''",
                 };
 
-                const data = await fetch("http://checkstatus.website:8099/Face/App_List", requestOptions);
+                const data = await fetch(url, requestOptions);
                 const response = await data.json();
                 console.log(response);
                 tableBody.innerHTML = ''
