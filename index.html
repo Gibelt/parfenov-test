@@ -136,6 +136,56 @@
             const alertUpdate = document.querySelector(".alert-message-update");
             const alertCreate = document.querySelector(".alert-message-create");
 
+            function createRow(tableIds, names, ids, policyIds, i) {
+                const rowElement = document.createElement("tr");
+
+                const cellId = document.createElement("td");
+                cellId.setAttribute("name", "id");
+                cellId.textContent = tableIds[i];
+                const cellName = document.createElement("td");
+                cellName.setAttribute("name", "name");
+                cellName.textContent = names[i];
+                const cellAlias = document.createElement("td");
+                cellAlias.setAttribute("name", "alias");
+                cellAlias.textContent = ids[i];
+                const cellPolicy = document.createElement("td");
+                cellPolicy.setAttribute("name", "pilicy");
+                cellPolicy.textContent = policyIds[i]
+                const cellChange = document.createElement("td");
+                const editButton = document.createElement("button");
+                const editIcon = document.createElement("i")
+                editButton.classList.add("btn");
+                editIcon.classList.add("bi");
+                editIcon.classList.add("bi-pencil-square");
+                editButton.appendChild(editIcon)
+                cellChange.appendChild(editButton);
+
+                editButton.addEventListener("click", e => {
+                    const text = e.target.closest("tr").children
+                    for (const child of text) {
+                        if (child.getAttribute('name') === "alias")
+                            appId = child.textContent;
+                    }
+                    const myModal = new bootstrap.Modal(document.getElementById('updateModal'));
+                    const appIdInput = document.getElementById('app-id-update');
+                    const appNameInput = document.getElementById('app-name-update');
+                    const appPolicyInput = document.getElementById('app-policy-update');
+                    appIdInput.value = appId;
+                    appNameInput.value = '';
+                    appPolicyInput.value = '';
+                    myModal.show()
+                    alertUpdate.style.display = "none";
+                });
+
+                rowElement.appendChild(cellId);
+                rowElement.appendChild(cellName);
+                rowElement.appendChild(cellAlias);
+                rowElement.appendChild(cellPolicy);
+                rowElement.appendChild(cellChange);
+
+                return rowElement
+            }
+
             async function loadDataIntoTable(url, table) {
 
                 const tableBody = table.querySelector("tbody")
@@ -155,52 +205,7 @@
                 console.log(response);
                 tableBody.innerHTML = ''
                 for (let i = 0; i < response["app_table_ids"].length; i++) {
-                    const rowElement = document.createElement("tr");
-
-                    const cellId = document.createElement("td");
-                    cellId.setAttribute("name", "id");
-                    cellId.textContent = response["app_table_ids"][i];
-                    const cellName = document.createElement("td");
-                    cellName.setAttribute("name", "name");
-                    cellName.textContent = response.names[i];
-                    const cellAlias = document.createElement("td");
-                    cellAlias.setAttribute("name", "alias");
-                    cellAlias.textContent = response.ids[i];
-                    const cellPolicy = document.createElement("td");
-                    cellPolicy.setAttribute("name", "pilicy");
-                    cellPolicy.textContent = response["policy_ids"][i]
-                    const cellChange = document.createElement("td");
-                    const editButton = document.createElement("button");
-                    const editIcon = document.createElement("i")
-                    editButton.classList.add("btn");
-                    editIcon.classList.add("bi");
-                    editIcon.classList.add("bi-pencil-square");
-                    editButton.appendChild(editIcon)
-                    cellChange.appendChild(editButton);
-
-                    editButton.addEventListener("click", e => {
-                        const text = e.target.closest("tr").children
-                        for (const child of text) {
-                            if (child.getAttribute('name') === "alias")
-                                appId = child.textContent;
-                        }
-                        const myModal = new bootstrap.Modal(document.getElementById('updateModal'));
-                        const appIdInput = document.getElementById('app-id-update');
-                        const appNameInput = document.getElementById('app-name-update');
-                        const appPolicyInput = document.getElementById('app-policy-update');
-                        appIdInput.value = appId;
-                        appNameInput.value = '';
-                        appPolicyInput.value = '';
-                        myModal.show()
-                        alertUpdate.style.display = "none";
-                    });
-
-                    rowElement.appendChild(cellId);
-                    rowElement.appendChild(cellName);
-                    rowElement.appendChild(cellAlias);
-                    rowElement.appendChild(cellPolicy);
-                    rowElement.appendChild(cellChange);
-
+                    const rowElement = createRow(response["app_table_ids"], response.names, response.ids, response["policy_ids"], i)
                     tableBody.appendChild(rowElement);
                 }
             }
@@ -218,9 +223,9 @@
                     body: `'{\n\"app_id\": \"${id}\", \n\"app_name\": \"${name}\", \n\"policy_id\": \"${policy}\", \n\"agent_js_config\": \"123123\", \n\"correlations_config\": \"321321\"\n}'`,
                 };
 
-                const data = await fetch(url, requestOptions)
-                const response = await data.json()
-                console.log(response)
+                const data = await fetch(url, requestOptions);
+                const response = await data.json();
+                return response;
             }
 
             async function sendNewApp(url, id, name, policy) {
@@ -237,20 +242,23 @@
                 const data = await fetch(url, requestOptions)
                 const response = await data.json()
                 console.log(response)
+                return response
             }
 
             const updateButtonSend = document.querySelector(".btn-update-send");
-            const createButton = document.querySelector(".btn-create");
-            const createButtonSend = document.querySelector(".btn-create-send")
-
             updateButtonSend.addEventListener("click", () => {
                 const myModal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
                 const name = document.getElementById("app-name-update").value;
                 const policy = document.getElementById("app-policy-update").value;
 
-                sendChangeData("http://checkstatus.website:8099/Face/Update_app", appId, name, policy).then(() => {
-                    myModal.hide()
-                    loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                sendChangeData("http://checkstatus.website:8099/Face/Update_app", appId, name, policy).then((response) => {
+                    if (response.error !== "1") {
+                        myModal.hide()
+                        loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                    } else {
+                        alertUpdate.style.display = "block"
+                        alertUpdate.closest("div").firstElementChild.textContent = "Не найдено приложение с указанным app_id."
+                    }
                 }).catch(e => {
                     alertUpdate.style.display = "block"
                     alertUpdate.closest("div").firstElementChild.textContent = e.message
@@ -258,6 +266,7 @@
                 })
             })
 
+            const createButton = document.querySelector(".btn-create");
             createButton.addEventListener("click", () => {
                 const myModal = new bootstrap.Modal(document.getElementById('createModal'));
                 const appIdInput = document.getElementById('app-id-create');
@@ -270,22 +279,30 @@
                 alertCreate.style.display = "none";
             })
 
+            const createButtonSend = document.querySelector(".btn-create-send");
             createButtonSend.addEventListener("click", () => {
                 const myModal = bootstrap.Modal.getInstance(document.getElementById('createModal'));
                 const appId = document.getElementById("app-id-create").value;
                 const name = document.getElementById("app-name-create").value;
                 const policy = document.getElementById("app-policy-create").value;
 
-                sendChangeData("http://checkstatus.website:8099/Face/New_app", appId, name, policy).then(() => {
-                    myModal.hide()
-                    loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                sendNewApp("http://checkstatus.website:8099/Face/New_app", appId, name, policy).then((response) => {
+                    if (response.error !== "1") {
+                        console.log(response.error)
+                        myModal.hide()
+                        loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                    } else {
+                        alertCreate.style.display = "block"
+                        alertCreate.closest("div").firstElementChild.textContent = "Приложение с указанным app_id уже существует."
+                    }
                 }).catch(e => {
-                    alertUpdate.style.display = "block"
-                    alertUpdate.closest("div").firstElementChild.textContent = e.message
+                    alertCreate.style.display = "block"
+                    alertCreate.closest("div").firstElementChild.textContent = e.message
                     console.error(e.message)
                 })
             })
 
+            //Создание диаграммы
             const data = [{ x: "2022-01-01 18:18:00", y: "0" }, { x: "2022-01-01 20:01:00", y: "180" }, { x: "2022-01-01 20:02:00", y: "179" }, { x: "2022-01-01 20:03:00", y: "210" }, { x: "2022-01-01 20:04:00", y: "211" }, { x: "2022-01-01 20:05:00", y: "213" }, { x: "2022-01-01 20:06:00", y: "220" }, { x: "2022-01-01 20:07:00", y: "221" }, { x: "2022-01-01 20:08:00", y: "219" }, { x: "2022-01-01 20:09:00", y: "217" }, { x: "2022-01-01 20:10:00", y: "216" }, { x: "2022-01-01 20:11:00", y: "230" }, { x: "2022-01-01 20:12:00", y: "219" }, { x: "2022-01-01 20:13:00", y: "216" }, { x: "2022-01-01 20:14:00", y: "214" }, { x: "2022-01-01 20:15:00", y: "217" }, { x: "2022-01-01 20:16:00", y: "217" }, { x: "2022-01-01 20:17:00", y: "215" }, { x: "2022-01-01 20:18:00", y: "213" }, { x: "2022-01-01 20:19:00", y: "50" }];
 
             const data2 = [{ x: "2022-01-01 18:18:00", y: "0" }, { x: "2022-01-01 20:01:00", y: "180" }, { x: "2022-01-01 20:02:00", y: "179" }, { x: "2022-01-01 20:03:00", y: "210" }, { x: "2022-01-01 20:04:00", y: "211" }, { x: "2022-01-01 20:05:00", y: "213" }, { x: "2022-01-01 20:06:00", y: "220" }, { x: "2022-01-01 20:07:00", y: "221" }, { x: "2022-01-01 20:08:00", y: "219" }, { x: "2022-01-01 20:09:00", y: "217" }, { x: "2022-01-01 20:10:00", y: "216" }, { x: "2022-01-01 20:11:00", y: "230" }, { x: "2022-01-01 20:12:00", y: "219" }, { x: "2022-01-01 20:13:00", y: "216" }, { x: "2022-01-01 20:14:00", y: "214" }, { x: "2022-01-01 20:15:00", y: "217" }, { x: "2022-01-01 20:16:00", y: "217" }, { x: "2022-01-01 20:17:00", y: "215" }, { x: "2022-01-01 20:18:00", y: "213" }, { x: "2022-01-01 20:19:00", y: "60" }];
