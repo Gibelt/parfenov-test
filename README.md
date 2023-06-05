@@ -12,10 +12,6 @@
 
 HTML, Javascript, Bootstrap, ChartJS
 
-### Ссылка на проект
-
-[https://gibelt.github.io/parfenov-test/](https://gibelt.github.io/parfenov-test/)
-
 #### Контакты для связи по всем вопросам
 
 + +79148808738

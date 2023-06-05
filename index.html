@@ -132,6 +132,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const getURL = "http://checkstatus.website:8099/Face/App_List"
+            const updateURL = "http://checkstatus.website:8099/Face/Update_app"
+            const createURL = "http://checkstatus.website:8099/Face/New_app"
             let appId
             const alertUpdate = document.querySelector(".alert-message-update");
             const alertCreate = document.querySelector(".alert-message-create");
@@ -186,7 +189,7 @@
                 return rowElement
             }
 
-            async function loadDataIntoTable(url, table) {
+            async function loadDataIntoTable(table) {
 
                 const tableBody = table.querySelector("tbody")
 
@@ -200,7 +203,7 @@
                     body: "''",
                 };
 
-                const data = await fetch(url, requestOptions);
+                const data = await fetch(getURL, requestOptions);
                 const response = await data.json();
                 console.log(response);
                 tableBody.innerHTML = ''
@@ -210,9 +213,9 @@
                 }
             }
 
-            loadDataIntoTable("https://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+            loadDataIntoTable(document.querySelector(".table"))
 
-            async function sendChangeData(url, id, name, policy) {
+            async function sendChangeData(id, name, policy) {
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json; charset=utf-8");
                 myHeaders.append("Content-Length", "124");
@@ -223,12 +226,12 @@
                     body: `'{\n\"app_id\": \"${id}\", \n\"app_name\": \"${name}\", \n\"policy_id\": \"${policy}\", \n\"agent_js_config\": \"123123\", \n\"correlations_config\": \"321321\"\n}'`,
                 };
 
-                const data = await fetch(url, requestOptions);
+                const data = await fetch(updateURL, requestOptions);
                 const response = await data.json();
                 return response;
             }
 
-            async function sendNewApp(url, id, name, policy) {
+            async function sendNewApp(id, name, policy) {
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json; charset=utf-8");
                 myHeaders.append("Content-Length", "124");
@@ -239,7 +242,7 @@
                     body: `'{\n\"app_id\": \"${id}\", \n\"app_name\": \"${name}\", \n\"policy_id\": \"${policy}\", \n\"agent_js_config\": \"123123\", \n\"correlations_config\": \"321321\"\n}'`,
                 };
 
-                const data = await fetch(url, requestOptions)
+                const data = await fetch(createURL, requestOptions)
                 const response = await data.json()
                 console.log(response)
                 return response
@@ -251,13 +254,13 @@
                 const name = document.getElementById("app-name-update").value;
                 const policy = document.getElementById("app-policy-update").value;
 
-                sendChangeData("https://checkstatus.website:8099/Face/Update_app", appId, name, policy).then((response) => {
+                sendChangeData(appId, name, policy).then((response) => {
                     if (response.error !== "1") {
                         myModal.hide()
-                        loadDataIntoTable("https://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                        loadDataIntoTable(document.querySelector(".table"))
                     } else {
                         alertUpdate.style.display = "block"
-                        alertUpdate.closest("div").firstElementChild.textContent = "Не найдено приложение с указанным app_id."
+                        alertUpdate.closest("div").firstElementChild.textContent = "Не найдено приложение с указанным идентификатором."
                     }
                 }).catch(e => {
                     alertUpdate.style.display = "block"
@@ -286,14 +289,14 @@
                 const name = document.getElementById("app-name-create").value;
                 const policy = document.getElementById("app-policy-create").value;
 
-                sendNewApp("https://checkstatus.website:8099/Face/New_app", appId, name, policy).then((response) => {
+                sendNewApp(appId, name, policy).then((response) => {
                     if (response.error !== "1") {
                         console.log(response.error)
                         myModal.hide()
-                        loadDataIntoTable("https://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                        loadDataIntoTable(document.querySelector(".table"))
                     } else {
                         alertCreate.style.display = "block"
-                        alertCreate.closest("div").firstElementChild.textContent = "Приложение с указанным app_id уже существует."
+                        alertCreate.closest("div").firstElementChild.textContent = "Приложение с указанным идентификатором уже существует."
                     }
                 }).catch(e => {
                     alertCreate.style.display = "block"
