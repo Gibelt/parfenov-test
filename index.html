@@ -210,7 +210,7 @@
                 }
             }
 
-            loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+            loadDataIntoTable("https://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
 
             async function sendChangeData(url, id, name, policy) {
                 const myHeaders = new Headers();
@@ -251,10 +251,10 @@
                 const name = document.getElementById("app-name-update").value;
                 const policy = document.getElementById("app-policy-update").value;
 
-                sendChangeData("http://checkstatus.website:8099/Face/Update_app", appId, name, policy).then((response) => {
+                sendChangeData("https://checkstatus.website:8099/Face/Update_app", appId, name, policy).then((response) => {
                     if (response.error !== "1") {
                         myModal.hide()
-                        loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                        loadDataIntoTable("https://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
                     } else {
                         alertUpdate.style.display = "block"
                         alertUpdate.closest("div").firstElementChild.textContent = "Не найдено приложение с указанным app_id."
@@ -286,11 +286,11 @@
                 const name = document.getElementById("app-name-create").value;
                 const policy = document.getElementById("app-policy-create").value;
 
-                sendNewApp("http://checkstatus.website:8099/Face/New_app", appId, name, policy).then((response) => {
+                sendNewApp("https://checkstatus.website:8099/Face/New_app", appId, name, policy).then((response) => {
                     if (response.error !== "1") {
                         console.log(response.error)
                         myModal.hide()
-                        loadDataIntoTable("http://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
+                        loadDataIntoTable("https://checkstatus.website:8099/Face/App_List", document.querySelector(".table"))
                     } else {
                         alertCreate.style.display = "block"
                         alertCreate.closest("div").firstElementChild.textContent = "Приложение с указанным app_id уже существует."
